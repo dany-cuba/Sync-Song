@@ -4,8 +4,11 @@ import { cwd } from "process";
 
 const env = process.env.NODE_ENV || "development";
 
+// Determine the environment file name based on the current environment
+const envFileName = env === "production" ? ".env" : `.env.${env}`;
+
 // Load environment variables from a .env file into process.env
-const envFilePath = resolve(cwd(), `.env.${env}`);
+const envFilePath = resolve(cwd(), envFileName);
 
 config({ path: envFilePath });
 
