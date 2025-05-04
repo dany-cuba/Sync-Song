@@ -5,6 +5,7 @@ const ROOM_EVENTS = {
   SYNC: "room:sync",
   LEAVE: "room:leave",
   USERS: "room:users",
+  GET_MY_ROOMS: "room:get-my-rooms",
 };
 
 const AUDIO_EVENTS = {

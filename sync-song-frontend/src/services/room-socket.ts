@@ -25,7 +25,6 @@ export const createRoom = (
   });
 };
 
-
 export const joinRoom = async (
   socket: Socket,
   payload: { roomId: string; userName: string }
