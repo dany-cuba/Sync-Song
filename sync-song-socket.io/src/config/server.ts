@@ -2,20 +2,20 @@ import express from "express";
 import cors from "cors";
 import { createServer, Server as NativeServer } from "http";
 import { DefaultEventsMap, Server as SocketServer } from "socket.io";
-import { URL, PORT } from "./env.config";
+import { HOST, PORT } from "./env.config";
 import { ServerConfig } from "../types/server";
 import { setupSocket } from "../socket";
 
 class Server implements ServerConfig {
-  url: string;
+  host: string;
   port: number;
   app: express.Application;
   server: NativeServer;
   io: SocketServer<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
 
   constructor() {
-    this.url = URL;
-    this.port = PORT as number;
+    this.host = HOST;
+    this.port = Number(PORT);
     this.app = express();
     this.server = createServer(this.app);
     this.io = new SocketServer(this.server, {
@@ -54,8 +54,8 @@ class Server implements ServerConfig {
   }
 
   listen() {
-    this.server.listen(Number(this.port), "0.0.0.0", () => {
-      console.log(`🚀 Server running on http://${this.url}:${this.port}`);
+    this.server.listen(this.port, this.host, () => {
+      console.log(`🚀 Server running on http://${this.host}:${this.port}`);
     });
   }
 }

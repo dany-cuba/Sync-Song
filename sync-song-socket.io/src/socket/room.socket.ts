@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { ROOM_EVENTS, ROOM_PREFIX } from "../constants/socket";
-import { redis } from "../lib/redis";
+import { redis } from "../config/redis";
 import { generateRoomId } from "../lib/room";
 import {
   CreateRoomPayload,
