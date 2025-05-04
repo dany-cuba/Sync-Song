@@ -27,4 +27,4 @@ yarn-error.log*
 next-env.d.ts
 
 # music folder
-/music
+/public/music

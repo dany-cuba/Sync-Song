@@ -11,7 +11,8 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Music } from "lucide-react";
 import { toast } from "sonner";
 import { useSocket } from "@/hooks/use-socket";
-import { CreateRoomResponse } from "@/types/socket";
+import { RoomResponse } from "@/types/socket";
+import { createRoom } from "@/services/room-socket";
 
 export default function CreateRoomPage() {
   const socket = useSocket();
@@ -20,18 +21,24 @@ export default function CreateRoomPage() {
 
   const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!socket) {
       toast.error("No se pudo conectar al servidor");
       return;
     }
 
-    socket.emit("room:create", { userName }, (response: CreateRoomResponse) => {
-      if (response.error) {
-        return toast.error("Error al crear la sala");
-      }
-      const { room } = response;
+    try {
+      const { msg, room } = createRoom(socket, { userName });
+
+      toast.success(msg);
       router.push(`/room/${room?.id}`);
-    });
+      return;
+    } catch (error: string | any) {
+      console.error(error);
+      return typeof error?.message === "string"
+        ? toast.error(error.message)
+        : toast.error("Error al crear la sala");
+    }
   };
 
   return (

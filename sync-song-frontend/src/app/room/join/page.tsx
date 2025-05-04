@@ -4,44 +4,40 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSocket } from "@/hooks/use-socket";
+import { joinRoom } from "@/services/room-socket";
 import { ArrowLeft, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type React from "react";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 
 export default function JoinRoomPage() {
-  const socket = useSocket();
-  const router = useRouter();
   const [roomId, setRoomId] = useState("");
   const [userName, setUserName] = useState("");
+  const router = useRouter();
+  const socket = useSocket();
 
-  const handleJoinRoom = async (e: React.FormEvent) => {
+  const handleJoinRoom = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!socket) {
+      toast.error("No se pudo conectar al servidor.");
+      return;
+    }
+
+    if (!roomId || !userName) {
+      toast.error("Por favor, completa todos los campos.");
+      return;
+    }
+
     try {
-      if (!socket) {
-        return toast.error("No se pudo conectar al servidor.");
-      }
-
-      // Emitir evento de unión a la sala
-      socket.emit(
-        "room:join",
-        { roomId, userName },
-        (response: { success: boolean; room?: any; error?: string }) => {
-          if (response.error) {
-            return toast.error(response.error);
-          }
-
-          if (response.success && response.room) {
-            toast.success("Te has unido a la sala.");
-            router.push(`/room/${roomId}`);
-          }
-        }
-      );
-    } catch (err) {
-      toast.error("No se pudo unir a la sala. Verifica el código.");
+      const { msg } = joinRoom(socket, { roomId, userName });
+      toast.success(msg);
+      router.push(`/room/${roomId}`);
+    } catch (error: string | any) {
+      return typeof error === "string"
+        ? toast.error(error)
+        : toast.error("Error al unirse a la sala.");
     }
   };
 

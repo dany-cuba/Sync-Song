@@ -1,8 +1,3 @@
-const SOCKET_EVENTS = {
-  CONNECT: "connection",
-  DISCONNECT: "disconnect",
-};
-
 const ROOM_EVENTS = {
   CREATE: "room:create",
   JOIN: "room:join",
@@ -21,6 +16,4 @@ const AUDIO_EVENTS = {
   ENDED: "audio:ended",
 };
 
-const ROOM_PREFIX = "room:";
-
-export { SOCKET_EVENTS, ROOM_EVENTS, ROOM_PREFIX, AUDIO_EVENTS };
+export { ROOM_EVENTS, AUDIO_EVENTS };

@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import { userPing } from "./user.socket";
 import { createRoom, joinRoom, updateRoom } from "./room.socket";
+import { pauseAudio, playAudio } from "./audio.socket";
 
 export const setupSocket = (io: Server) => {
   io.on("connection", (socket) => {
@@ -13,6 +14,10 @@ export const setupSocket = (io: Server) => {
     createRoom(socket);
     joinRoom(socket);
     updateRoom(socket);
+
+    // Handle audio events
+    playAudio(socket)
+    pauseAudio(socket)
 
     socket.on("disconnect", () => {
       console.log(`🚪 Client disconnected: ${socket.id}`);

@@ -9,6 +9,12 @@ interface RoomState {
   createdAt: number;
 }
 
+interface RoomResponse {
+  success?: boolean;
+  error?: string;
+  room?: RoomState;
+}
+
 interface CreateRoomPayload {
   userName: string;
 }
@@ -16,12 +22,6 @@ interface CreateRoomPayload {
 interface JoinRoomPayload {
   roomId: string;
   userName: string;
-}
-
-interface RoomResponse {
-  success?: boolean;
-  error?: string;
-  room?: RoomState;
 }
 
 interface UpdateRoomPayload {

@@ -1,6 +1,6 @@
 import { RoomState } from "./room";
 
-export interface CreateRoomResponse {
+export interface RoomResponse {
   success?: boolean;
   error?: string;
   room?: RoomState;

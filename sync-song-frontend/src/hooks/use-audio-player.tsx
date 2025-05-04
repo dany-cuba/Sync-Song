@@ -1,11 +1,32 @@
+"use client";
+
+import { pauseAudio, playAudio } from "@/services/audio-socket";
+import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useSocket } from "./use-socket";
+import { toast } from "sonner";
+import { useSocketListener } from "./use-socket-listener";
+import { AUDIO_EVENTS } from "@/constants/socket";
 
 const useAudioPlayer = () => {
+  const params = useParams();
+  const roomId = params.id as string;
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [songDuration, setSongDuration] = useState(0);
   const [buffered, setBuffered] = useState(0);
+
+  const socket = useSocket();
+
+  useSocketListener(socket, AUDIO_EVENTS.PLAY, (data) => {
+    setIsPlaying(true);
+  });
+
+  useSocketListener(socket, AUDIO_EVENTS.PAUSE, (data) => {
+    setIsPlaying(false);
+  });
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -84,7 +105,27 @@ const useAudioPlayer = () => {
   };
 
   const handleIsPlayingToggle = () => {
-    setIsPlaying((prev) => !prev);
+    if (!audioRef.current || !audioRef.current.duration)
+      return toast.error("No hay canción en reproducción");
+
+    if (!socket) return toast.error("No hay conexión al servidor");
+
+    // check if the audio is already playing
+    if (audioRef.current.paused) {
+      try {
+        playAudio(socket, roomId);
+        setIsPlaying((prev) => !prev);
+      } catch (error) {
+        return toast.error("Error al reproducir la música");
+      }
+    } else {
+      try {
+        pauseAudio(socket, roomId);
+        setIsPlaying((prev) => !prev);
+      } catch (error) {
+        return toast.error("Error al pausar la música");
+      }
+    }
   };
 
   return {

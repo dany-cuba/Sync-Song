@@ -2,7 +2,6 @@
 
 import { createContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { BACKEND_URL } from "@/config/env.config";
 
 export const SocketContext = createContext<Socket | null>(null);
 
@@ -12,7 +11,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!socketRef.current) {
-      socketRef.current = io(BACKEND_URL);
+      socketRef.current = io(process.env.NEXT_PUBLIC_BACKEND_URL);
 
       socketRef.current.on("connect", () => {
         console.log("✅ Conectado al servidor de Socket.IO");
