@@ -54,8 +54,8 @@ class Server implements ServerConfig {
   }
 
   listen() {
-    this.server.listen(this.port, this.host, () => {
-      console.log(`🚀 Server running on http://${this.host}:${this.port}`);
+    this.server.listen(this.port, () => {
+      console.log(`🚀 Server running on port: ${this.port}`);
     });
   }
 }

@@ -14,7 +14,7 @@ config({ path: envFilePath });
 
 export const {
   HOST = "localhost",
-  PORT = "3001",
+  PORT = 3001,
   NODE_ENV,
   REDIS_HOST = "localhost",
   REDIS_PORT = "6379",
