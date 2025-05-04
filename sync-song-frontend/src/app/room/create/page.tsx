@@ -2,17 +2,16 @@
 
 import type React from "react";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Music } from "lucide-react";
-import { toast } from "sonner";
 import { useSocket } from "@/hooks/use-socket";
-import { RoomResponse } from "@/types/socket";
 import { createRoom } from "@/services/room-socket";
+import { ArrowLeft, Music } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function CreateRoomPage() {
   const socket = useSocket();
@@ -28,13 +27,12 @@ export default function CreateRoomPage() {
     }
 
     try {
-      const { msg, room } = createRoom(socket, { userName });
+      const { msg, room } = await createRoom(socket, { userName });
 
       toast.success(msg);
       router.push(`/room/${room?.id}`);
       return;
     } catch (error: string | any) {
-      console.error(error);
       return typeof error?.message === "string"
         ? toast.error(error.message)
         : toast.error("Error al crear la sala");

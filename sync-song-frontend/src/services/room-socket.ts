@@ -8,37 +8,43 @@ import { Socket } from "socket.io-client";
 export const createRoom = (
   socket: Socket,
   payload: { userName: string }
-): { room?: RoomState; msg: string } => {
+): Promise<{ room?: RoomState; msg: string }> => {
   const { userName } = payload;
-  let room: RoomState | undefined;
 
-  socket.emit(ROOM_EVENTS.CREATE, { userName }, (response: RoomResponse) => {
-    if (response.error) {
-      throw new Error(response.error);
-    }
-    const { room: roomResponse } = response;
-    room = roomResponse;
+  return new Promise((resolve, reject) => {
+    socket.emit(ROOM_EVENTS.CREATE, { userName }, (response: RoomResponse) => {
+      if (response.error) {
+        return reject(new Error(response.error));
+      }
+
+      resolve({
+        room: response.room,
+        msg: "Sala creada con éxito",
+      });
+    });
   });
-
-  return { room, msg: "Sala creada con éxito" };
 };
 
-export const joinRoom = (
+
+export const joinRoom = async (
   socket: Socket,
   payload: { roomId: string; userName: string }
-): { msg: string } => {
+): Promise<{ msg: string }> => {
   const { roomId, userName } = payload;
 
-  // Emitir evento de unión a la sala
-  socket.emit(
-    ROOM_EVENTS.JOIN,
-    { roomId, userName },
-    (response: RoomResponse) => {
-      if (response.error) {
-        throw new Error(response.error);
+  await new Promise<void>((resolve, reject) => {
+    socket.emit(
+      ROOM_EVENTS.JOIN,
+      { roomId, userName },
+      (response: RoomResponse) => {
+        if (response.error) {
+          return reject(new Error(response.error));
+        }
+        resolve();
       }
-    }
-  );
+    );
+  });
 
   return { msg: "Te has unido a la sala" };
 };
+

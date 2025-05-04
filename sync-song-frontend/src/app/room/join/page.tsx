@@ -17,7 +17,7 @@ export default function JoinRoomPage() {
   const router = useRouter();
   const socket = useSocket();
 
-  const handleJoinRoom = (e: FormEvent<HTMLFormElement>) => {
+  const handleJoinRoom = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!socket) {
@@ -31,7 +31,7 @@ export default function JoinRoomPage() {
     }
 
     try {
-      const { msg } = joinRoom(socket, { roomId, userName });
+      const { msg } = await joinRoom(socket, { roomId, userName });
       toast.success(msg);
       router.push(`/room/${roomId}`);
     } catch (error: string | any) {
