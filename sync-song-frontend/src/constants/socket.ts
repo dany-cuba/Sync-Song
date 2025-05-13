@@ -17,4 +17,8 @@ const AUDIO_EVENTS = {
   ENDED: "audio:ended",
 };
 
-export { ROOM_EVENTS, AUDIO_EVENTS };
+const MUSIC_LIBRARY_EVENTS = {
+  SYNC: "library:sync",
+}
+
+export { ROOM_EVENTS, AUDIO_EVENTS, MUSIC_LIBRARY_EVENTS };

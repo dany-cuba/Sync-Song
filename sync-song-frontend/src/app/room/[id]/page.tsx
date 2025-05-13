@@ -8,12 +8,32 @@ import { ListMusic, Music, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { useSocketListener } from "@/hooks/use-socket-listener";
+import { MUSIC_LIBRARY_EVENTS } from "@/constants/socket";
+import { MusicLibraryData } from "@/types/music-library";
+import { useSocket } from "@/hooks/use-socket";
+import { toast } from "sonner";
 
 export default function RoomPage() {
   const params = useParams();
   const roomId = params.id;
+  const socket = useSocket();
 
   const [activeTab, setActiveTab] = useState("queue");
+
+  // Listen for the SYNC event to get the music library
+  useSocketListener(
+    socket,
+    MUSIC_LIBRARY_EVENTS.SYNC,
+    (data: MusicLibraryData) => {
+      if (data.error) {
+        toast.error(data.error);
+      } else {
+        toast.success("Biblioteca de música sincronizada");
+        console.log("MUSIC_LIBRARY", data.songs);
+      }
+    }
+  );
 
   return (
     <>

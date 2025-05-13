@@ -17,7 +17,7 @@ export const {
   PORT = 3001,
   NODE_ENV,
   REDIS_HOST = "localhost",
-  REDIS_PORT = "6379",
+  REDIS_PORT = 6379,
   REDIS_USERNAME,
   REDIS_PASSWORD,
 } = process.env;

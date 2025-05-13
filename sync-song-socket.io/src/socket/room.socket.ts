@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
-import { ROOM_EVENTS, ROOM_PREFIX } from "../constants/socket";
 import { redis } from "../config/redis";
+import { ROOM_EVENTS, ROOM_PREFIX } from "../constants/socket";
 import { generateRoomId } from "../lib/room";
 import {
   CreateRoomPayload,
@@ -10,6 +10,7 @@ import {
   RoomState,
   UpdateRoomPayload,
 } from "../types/room";
+import { sendMusicLibrary } from "./music-library.socket";
 
 export const createRoom = (socket: Socket) => {
   socket.on(
@@ -39,8 +40,9 @@ export const createRoom = (socket: Socket) => {
         createdAt: Date.now(),
       };
 
-      await redis.set(key, JSON.stringify(roomState), { EX: 3600 });
-      socket.join(roomId);
+      // emit the music library
+      await sendMusicLibrary(socket);
+
       callback?.({ success: true, room: roomState });
       // socket.emit(ROOM_EVENTS.SYNC, roomState);
     }
@@ -67,6 +69,10 @@ export const joinRoom = (socket: Socket) => {
 
       await redis.set(key, JSON.stringify(room), { EX: 3600 });
       socket.join(roomId);
+
+      // emit the music library
+      await sendMusicLibrary(socket);
+
       // currentRoom = roomId;
       cb?.({ success: true, room });
     }
