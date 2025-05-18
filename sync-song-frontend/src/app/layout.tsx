@@ -6,6 +6,8 @@ import type React from "react";
 import { Toaster } from "sonner";
 import { SocketProvider } from "@/context/socket-provider";
 import "./globals.css";
+import Link from "next/link";
+import Header from "@/components/header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,6 +36,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SocketProvider>
+            <Header />
             {children}
             <Toaster
               position="top-center"
