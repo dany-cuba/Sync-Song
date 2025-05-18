@@ -5,8 +5,4 @@ type Song = {
   cover?: string;
 };
 
-type AudioPlayerProps = {
-  song: Song;
-};
-
-export type { Song, AudioPlayerProps };
+export type { Song };

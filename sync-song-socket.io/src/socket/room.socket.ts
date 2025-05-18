@@ -40,6 +40,9 @@ export const createRoom = (socket: Socket) => {
         createdAt: Date.now(),
       };
 
+      await redis.set(key, JSON.stringify(roomState), { EX: 3600 });
+      socket.join(roomId);
+
       // emit the music library
       await sendMusicLibrary(socket);
 

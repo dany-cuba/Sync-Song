@@ -13,6 +13,8 @@ export const createRoom = (
 
   return new Promise((resolve, reject) => {
     socket.emit(ROOM_EVENTS.CREATE, { userName }, (response: RoomResponse) => {
+      console.log("response", response);
+
       if (response.error) {
         return reject(new Error(response.error));
       }

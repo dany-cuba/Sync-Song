@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import useAudioPlayer from "@/hooks/use-audio-player";
 import { formatTime } from "@/lib/time";
-import { AudioPlayerProps } from "@/types/audio";
+import useAudioPlayerStore from "@/stores/audio-player-store";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 
-export function AudioPlayer({ song }: AudioPlayerProps) {
+export function AudioPlayer() {
   const {
     audioRef,
     buffered,
@@ -18,23 +18,27 @@ export function AudioPlayer({ song }: AudioPlayerProps) {
     handleIsPlayingToggle,
   } = useAudioPlayer();
 
+  const song = useAudioPlayerStore((state) => state.currentSong);
+
   return (
     <div className="rounded-xl bg-black/30 p-6 backdrop-blur-lg">
-      <audio ref={audioRef} src={song.src} preload="metadata" />
+      <audio ref={audioRef} src={song?.src} preload="metadata" />
 
       <div className="flex flex-col items-center gap-6 md:flex-row">
         <div className="w-full max-w-48 flex-shrink-0 overflow-hidden rounded-lg bg-purple-700">
           <img
             src={"/placeholder.svg"}
-            alt={`${song.title} cover`}
+            alt={`${song?.title} cover`}
             className="h-full w-full object-cover"
           />
         </div>
 
         <div className="flex flex-1 flex-col w-full gap-4">
           <div className="flex flex-col gap-2 text-center md:text-left">
-            <h2 className="text-2xl font-bold text-white">{song.title}</h2>
-            <p className="text-purple-200">{song.artist}</p>
+            <h2 className="text-2xl font-bold text-white">
+              {song?.title ?? "-"}
+            </h2>
+            <p className="text-purple-200">{song?.artist ?? "Desconocido"}</p>
           </div>
 
           <div className="flex flex-col relative gap-2">
@@ -75,6 +79,7 @@ export function AudioPlayer({ song }: AudioPlayerProps) {
               size="icon"
               className="h-12 w-12 rounded-full bg-white text-purple-900 hover:bg-purple-600"
               onClick={handleIsPlayingToggle}
+              disabled={!song}
               aria-label={isPlaying ? "Pausar" : "Reproducir"}
             >
               {isPlaying ? (

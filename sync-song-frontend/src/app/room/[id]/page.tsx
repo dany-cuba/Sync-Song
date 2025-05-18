@@ -13,12 +13,14 @@ import { MUSIC_LIBRARY_EVENTS } from "@/constants/socket";
 import { MusicLibraryData } from "@/types/music-library";
 import { useSocket } from "@/hooks/use-socket";
 import { toast } from "sonner";
+import { Song } from "@/types/audio";
 
 export default function RoomPage() {
   const params = useParams();
   const roomId = params.id;
   const socket = useSocket();
 
+  const [musicLibrary, setMusicLibrary] = useState<Song[]>([]);
   const [activeTab, setActiveTab] = useState("queue");
 
   // Listen for the SYNC event to get the music library
@@ -56,7 +58,7 @@ export default function RoomPage() {
 
       <main className="container mx-auto flex flex-1 flex-col px-4 py-6 gap-6">
         {/* Reproductor de música */}
-        <AudioPlayer song={mockSongs[0]} />
+        <AudioPlayer />
 
         <div>
           {/* Pestañas */}
