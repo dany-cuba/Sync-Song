@@ -1,42 +1,17 @@
 "use client";
 
 import { AudioPlayer } from "@/components/audio-player";
+import SongQueueItem from "@/components/song-queue";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { mockMembers, mockSongs } from "@/constants/mock-data";
-import { ListMusic, Music, UsersIcon } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { mockMembers } from "@/constants/mock-data";
+import { useMusicLibrary } from "@/hooks/use-music-library";
+import { ListMusic, Loader2, Music, UsersIcon } from "lucide-react";
 import { useState } from "react";
-import { useSocketListener } from "@/hooks/use-socket-listener";
-import { MUSIC_LIBRARY_EVENTS } from "@/constants/socket";
-import { MusicLibraryData } from "@/types/music-library";
-import { useSocket } from "@/hooks/use-socket";
-import { toast } from "sonner";
-import { Song } from "@/types/audio";
-import SongQueueItem from "@/components/song-queue";
 
 export default function RoomPage() {
-  const params = useParams();
-  const roomId = params.id;
-  const socket = useSocket();
-
-  const [musicLibrary, setMusicLibrary] = useState<Song[]>([]);
+  const { musicLibrary, loading } = useMusicLibrary();
   const [activeTab, setActiveTab] = useState("queue");
-
-  // Listen for the SYNC event to get the music library
-  useSocketListener(
-    socket,
-    MUSIC_LIBRARY_EVENTS.SYNC,
-    (data: MusicLibraryData) => {
-      if (data.error) {
-        toast.error(data.error);
-      } else {
-        toast.success("Biblioteca de música sincronizada");
-        console.log("MUSIC_LIBRARY", data.songs);
-      }
-    }
-  );
 
   return (
     <main className="container mx-auto flex flex-1 flex-col px-4 py-6 gap-6">
@@ -77,9 +52,17 @@ export default function RoomPage() {
               <h3 className="mb-4 text-lg font-medium text-white">
                 Cola de reproducción
               </h3>
-              {mockSongs.slice(1).map((song) => (
-                <SongQueueItem key={song.id} song={song} />
-              ))}
+
+              {loading ? (
+                <div className="flex justify-center w-full py-1">
+                  <Loader2 className="size-8 animate-spin text-purple-500" />
+                </div>
+              ) : (
+                musicLibrary.map((song) => (
+                  <SongQueueItem key={song.fileId} song={song} />
+                ))
+              )}
+
               <Button className="mt-4 w-full bg-white/10 text-white hover:bg-white/20">
                 <Music className="mr-2 h-4 w-4" />
                 Añadir canción

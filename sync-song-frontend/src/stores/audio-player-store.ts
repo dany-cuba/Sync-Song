@@ -7,6 +7,7 @@ interface AudioPlayerStore {
   play: (song: Song) => void;
   pause: () => void;
   stop: () => void;
+  setCurrentSong: (song: Song) => void;
 }
 
 const useAudioPlayerStore = create<AudioPlayerStore>((set) => ({
@@ -15,6 +16,7 @@ const useAudioPlayerStore = create<AudioPlayerStore>((set) => ({
   play: (song) => set({ currentSong: song, isPlaying: true }),
   pause: () => set({ isPlaying: false }),
   stop: () => set({ currentSong: null, isPlaying: false }),
+  setCurrentSong: (song: Song) => set({ currentSong: song }),
 }));
 
 export default useAudioPlayerStore;

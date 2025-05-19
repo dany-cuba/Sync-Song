@@ -22,13 +22,13 @@ export function AudioPlayer() {
 
   return (
     <div className="rounded-xl bg-black/30 p-6 backdrop-blur-lg">
-      <audio ref={audioRef} src={song?.src} preload="metadata" />
+      <audio ref={audioRef} src={song?.url} preload="metadata" />
 
       <div className="flex flex-col items-center gap-6 md:flex-row">
         <div className="w-full max-w-48 flex-shrink-0 overflow-hidden rounded-lg bg-purple-700">
           <img
             src={"/placeholder.svg"}
-            alt={`${song?.title} cover`}
+            alt={`${song?.embeddedMetadata?.Title} cover`}
             className="h-full w-full object-cover"
           />
         </div>
@@ -36,9 +36,9 @@ export function AudioPlayer() {
         <div className="flex flex-1 flex-col w-full gap-4">
           <div className="flex flex-col gap-2 text-center md:text-left">
             <h2 className="text-2xl font-bold text-white">
-              {song?.title ?? "-"}
+              {song?.embeddedMetadata?.Title ?? "-"}
             </h2>
-            <p className="text-purple-200">{song?.artist ?? "Desconocido"}</p>
+            <p className="text-purple-200">{song?.embeddedMetadata?.Artist ?? "Desconocido"}</p>
           </div>
 
           <div className="flex flex-col relative gap-2">
