@@ -2,42 +2,54 @@
 
 import { pauseAudio, playAudio } from "@/services/audio-socket";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useSocket } from "./use-socket";
 import { toast } from "sonner";
 import { useSocketListener } from "./use-socket-listener";
 import { AUDIO_EVENTS } from "@/constants/socket";
+import useAudioPlayerStore from "@/stores/audio-player-store";
+import { useMusicLibrary } from "./use-music-library";
 
 const useAudioPlayer = () => {
   const params = useParams();
   const roomId = params.id as string;
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [songDuration, setSongDuration] = useState(0);
-  const [buffered, setBuffered] = useState(0);
-
   const socket = useSocket();
+  const { getSongById } = useMusicLibrary();
 
-  useSocketListener(socket, AUDIO_EVENTS.PLAY, (data) => {
+  const {
+    isPlaying,
+    setIsPlaying,
+    currentSong,
+    currentTime,
+    setCurrentTime,
+    setBuffered,
+    setCurrentSong,
+  } = useAudioPlayerStore();
+
+  // Socket listeners
+  useSocketListener(socket, AUDIO_EVENTS.PLAY, (_) => {
     setIsPlaying(true);
   });
 
-  useSocketListener(socket, AUDIO_EVENTS.PAUSE, (data) => {
+  useSocketListener(socket, AUDIO_EVENTS.PAUSE, (_) => {
     setIsPlaying(false);
   });
 
+  useSocketListener(socket, AUDIO_EVENTS.CHANGE_SONG, (songId: string) => {
+    const song = getSongById(songId);
+    if (song) {
+      setCurrentSong(song);
+    }
+  });
+
+  // Event listeners
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Configurar eventos
-    const handleDurationChange = () => {
-      setSongDuration(audio.duration);
-    };
-
-    const setAudioTime = () => {
+    const updateTime = () => {
       setCurrentTime(audio.currentTime);
     };
 
@@ -47,38 +59,27 @@ const useAudioPlayer = () => {
     };
 
     const updateBuffered = () => {
-      if (!audio) return;
-
       if (audio.buffered.length > 0) {
         const end = audio.buffered.end(audio.buffered.length - 1);
         setBuffered(end);
       }
     };
 
-    // Agregar event listeners
-    audio.addEventListener("durationchange", handleDurationChange);
-    audio.addEventListener("timeupdate", setAudioTime);
+    audio.addEventListener("timeupdate", updateTime);
     audio.addEventListener("ended", handleEnded);
     audio.addEventListener("progress", updateBuffered);
 
-    // 👇 Chequear si la metadata ya está lista
-    if (audio.readyState >= 1) {
-      setSongDuration(audio.duration);
-    }
-
-    // Cleanup
     return () => {
-      audio.removeEventListener("loadeddata", handleDurationChange);
-      audio.removeEventListener("timeupdate", setAudioTime);
+      audio.removeEventListener("timeupdate", updateTime);
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("progress", updateBuffered);
     };
   }, []);
 
-  // Efecto para manejar la reproducción/pausa
+  // Reproducir / Pausar según el estado global
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !currentSong) return;
 
     if (isPlaying) {
       audio.play().catch((error) => {
@@ -88,9 +89,9 @@ const useAudioPlayer = () => {
     } else {
       audio.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, currentSong]);
 
-  // Efecto para manejar cambios en el tiempo actual
+  // Si el currentTime en la store cambia, lo reflejas
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -100,41 +101,24 @@ const useAudioPlayer = () => {
     }
   }, [currentTime]);
 
-  const handleCurrentTimeChange = (value: number[]) => {
-    setCurrentTime(value[0]);
-  };
-
   const handleIsPlayingToggle = () => {
-    if (!audioRef.current || !audioRef.current.duration)
-      return toast.error("No hay canción en reproducción");
+    if (!audioRef.current?.duration) return toast.error("No hay canción");
+    if (!socket) return toast.error("Sin conexión");
 
-    if (!socket) return toast.error("No hay conexión al servidor");
-
-    // check if the audio is already playing
     if (audioRef.current.paused) {
-      try {
-        playAudio(socket, roomId);
-        setIsPlaying((prev) => !prev);
-      } catch (error) {
-        return toast.error("Error al reproducir la música");
-      }
+      playAudio(socket, roomId);
+      setIsPlaying(true);
     } else {
-      try {
-        pauseAudio(socket, roomId);
-        setIsPlaying((prev) => !prev);
-      } catch (error) {
-        return toast.error("Error al pausar la música");
-      }
+      pauseAudio(socket, roomId);
+      setIsPlaying(false);
     }
   };
 
   return {
     audioRef,
+    currentSong,
     isPlaying,
     currentTime,
-    songDuration,
-    buffered,
-    handleCurrentTimeChange,
     handleIsPlayingToggle,
   };
 };

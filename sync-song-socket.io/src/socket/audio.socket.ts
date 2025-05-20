@@ -41,3 +41,23 @@ export const pauseAudio = (socket: Socket) => {
     }
   );
 }
+
+export const changeSong = (socket: Socket) => {
+  socket.on(
+    AUDIO_EVENTS.CHANGE_SONG,
+    (payload: AudioPayload, callback?: (response: AudioResponse) => void) => {
+      const { roomId, songId } = payload;
+
+      // check if the user is in the room
+      if (!socket.rooms.has(roomId)) {
+        return callback?.({ success: false, error: "No estás en la sala" });
+      }
+
+      // Emit the change song event to all users in the room
+      socket.broadcast.to(roomId).emit(AUDIO_EVENTS.CHANGE_SONG, songId);
+
+      // Call the callback function to acknowledge the event
+      callback?.({ success: true });
+    }
+  );
+};

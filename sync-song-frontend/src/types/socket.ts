@@ -5,3 +5,8 @@ export interface RoomResponse {
   error?: string;
   room?: RoomState;
 }
+
+export interface AudioResponse {
+  success: boolean;
+  error?: string;
+}

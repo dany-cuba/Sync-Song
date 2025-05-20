@@ -19,6 +19,7 @@ const AUDIO_EVENTS = {
   VOLUME: "audio:volume",
   TIME_UPDATE: "audio:timeupdate",
   ENDED: "audio:ended",
+  CHANGE_SONG: "audio:change_song",
 };
 
 const MUSIC_LIBRARY_EVENTS = {

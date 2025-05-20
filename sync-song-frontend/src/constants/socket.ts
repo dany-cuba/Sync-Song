@@ -15,10 +15,11 @@ const AUDIO_EVENTS = {
   VOLUME: "audio:volume",
   TIME_UPDATE: "audio:timeupdate",
   ENDED: "audio:ended",
+  CHANGE_SONG: "audio:change_song",
 };
 
 const MUSIC_LIBRARY_EVENTS = {
   SYNC: "library:sync",
-}
+};
 
 export { ROOM_EVENTS, AUDIO_EVENTS, MUSIC_LIBRARY_EVENTS };

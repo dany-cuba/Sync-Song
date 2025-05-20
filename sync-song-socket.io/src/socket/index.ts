@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import { userPing } from "./user.socket";
 import { createRoom, joinRoom, updateRoom } from "./room.socket";
-import { pauseAudio, playAudio } from "./audio.socket";
+import { changeSong, pauseAudio, playAudio } from "./audio.socket";
 
 export const setupSocket = (io: Server) => {
   io.on("connection", (socket) => {
@@ -16,27 +16,12 @@ export const setupSocket = (io: Server) => {
     updateRoom(socket);
 
     // Handle audio events
-    playAudio(socket)
-    pauseAudio(socket)
+    playAudio(socket);
+    pauseAudio(socket);
+    changeSong(socket);
 
     socket.on("disconnect", () => {
       console.log(`🚪 Client disconnected: ${socket.id}`);
     });
-
-    // socket.on(SOCKET_EVENTS.DISCONNECT, async () => {
-    //   console.log("👋 Usuario desconectado");
-
-    //   if (!currentRoom) return;
-
-    //   setTimeout(async () => {
-    //     const room = io.sockets.adapter.rooms.get(currentRoom!);
-    //     const userCount = room ? room.size : 0;
-
-    //     if (userCount === 0) {
-    //       console.log(`🧹 Sala ${currentRoom} vacía, eliminando estado...`);
-    //       await redis.del(`${ROOM_PREFIX}${currentRoom}`);
-    //     }
-    //   }, 100);
-    // });
   });
 };

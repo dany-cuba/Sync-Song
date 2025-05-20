@@ -38,5 +38,10 @@ export const useMusicLibrary = () => {
     fetchMusicLibrary();
   }, []);
 
-  return { musicLibrary, loading };
+  const getSongById = (id: string) => {
+    const song = musicLibrary.find((song) => song.fileId === id);
+    return song || null;
+  };
+
+  return { musicLibrary, loading, getSongById };
 };

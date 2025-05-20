@@ -5,40 +5,33 @@ import { Slider } from "@/components/ui/slider";
 import useAudioPlayer from "@/hooks/use-audio-player";
 import { formatTime } from "@/lib/time";
 import useAudioPlayerStore from "@/stores/audio-player-store";
-import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
+import { Music, Pause, Play, SkipBack, SkipForward } from "lucide-react";
 
 export function AudioPlayer() {
-  const {
-    audioRef,
-    buffered,
-    currentTime,
-    isPlaying,
-    songDuration,
-    handleCurrentTimeChange,
-    handleIsPlayingToggle,
-  } = useAudioPlayer();
+  const { audioRef, currentTime, isPlaying, handleIsPlayingToggle } =
+    useAudioPlayer();
 
-  const song = useAudioPlayerStore((state) => state.currentSong);
+  const currentSong = useAudioPlayerStore((state) => state.currentSong);
+  const buffered = useAudioPlayerStore((state) => state.buffered);
+  const setCurrentTime = useAudioPlayerStore((state) => state.setCurrentTime);
 
   return (
     <div className="rounded-xl bg-black/30 p-6 backdrop-blur-lg">
-      <audio ref={audioRef} src={song?.url} preload="metadata" />
+      <audio ref={audioRef} src={currentSong?.url} preload="metadata" />
 
       <div className="flex flex-col items-center gap-6 md:flex-row">
-        <div className="w-full max-w-48 flex-shrink-0 overflow-hidden rounded-lg bg-purple-700">
-          <img
-            src={"/placeholder.svg"}
-            alt={`${song?.embeddedMetadata?.Title} cover`}
-            className="h-full w-full object-cover"
-          />
+        <div className="w-full max-w-48 flex-shrink-0 overflow-hidden p-4 rounded-lg bg-purple-900">
+          <Music className="size-full" />
         </div>
 
         <div className="flex flex-1 flex-col w-full gap-4">
           <div className="flex flex-col gap-2 text-center md:text-left">
             <h2 className="text-2xl font-bold text-white">
-              {song?.embeddedMetadata?.Title ?? "-"}
+              {currentSong?.embeddedMetadata?.Title ?? "-"}
             </h2>
-            <p className="text-purple-200">{song?.embeddedMetadata?.Artist ?? "Desconocido"}</p>
+            <p className="text-purple-200">
+              {currentSong?.embeddedMetadata?.Artist ?? "Desconocido"}
+            </p>
           </div>
 
           <div className="flex flex-col relative gap-2">
@@ -46,22 +39,28 @@ export function AudioPlayer() {
             <div className="absolute left-0 h-2 z-20 w-full pointer-events-none">
               <div
                 className="h-full rounded-full bg-purple-400/30"
-                style={{ width: `${(buffered / (songDuration || 1)) * 100}%` }}
+                style={{
+                  width: `${
+                    (buffered / (audioRef.current?.duration || 1)) * 100
+                  }%`,
+                }}
               />
             </div>
 
             {/* Slider real */}
             <Slider
               value={[currentTime]}
-              max={songDuration || 100}
+              max={audioRef.current?.duration || 100}
               step={1}
-              onValueChange={handleCurrentTimeChange}
+              onValueChange={([value]) => {
+                setCurrentTime(value);
+              }}
               className="relative z-10"
             />
 
             <div className="flex justify-between text-xs text-purple-200">
               <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(songDuration)}</span>
+              <span>{formatTime(audioRef.current?.duration || 0)}</span>
             </div>
           </div>
 
@@ -79,7 +78,7 @@ export function AudioPlayer() {
               size="icon"
               className="h-12 w-12 rounded-full bg-white text-purple-900 hover:bg-purple-600"
               onClick={handleIsPlayingToggle}
-              disabled={!song}
+              disabled={!currentSong}
               aria-label={isPlaying ? "Pausar" : "Reproducir"}
             >
               {isPlaying ? (
