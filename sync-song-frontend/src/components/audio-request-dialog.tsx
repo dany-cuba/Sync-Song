@@ -8,12 +8,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
 const AudioRequestDialog = () => {
   return (
     <AlertDialog defaultOpen>
-      <AlertDialogContent className="bg-purple-950 text-purple-200 gap-8 w-auto">
+      <AlertDialogTrigger>Open</AlertDialogTrigger>
+      <AlertDialogContent className="bg-purple-950 text-purple-200 gap-8 max-w-[95%] rounded-lg sm:w-auto">
         <AlertDialogHeader className="gap-4">
           <AlertDialogTitle className="text-center text-2xl">
             Permitir Música

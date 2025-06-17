@@ -26,7 +26,7 @@ export default function RootLayout({
       <body
         className={cn(
           inter.className,
-          "flex min-h-screen flex-col bg-gradient-to-br from-purple-900 via-violet-800 to-fuchsia-900 px-4"
+          "flex min-h-screen flex-col bg-gradient-to-br from-purple-900 via-violet-800 to-fuchsia-900 !px-4"
         )}
       >
         <ThemeProvider
