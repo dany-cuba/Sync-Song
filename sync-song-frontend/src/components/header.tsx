@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import RoomHeader from "./room-header";
 
 const Header = () => {
   return (
@@ -14,6 +15,8 @@ const Header = () => {
           </div>
           <h1 className="text-2xl font-bold text-white">Sync Song</h1>
         </Link>
+        
+        <RoomHeader />
       </div>
     </header>
   );

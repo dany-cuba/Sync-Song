@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function LandingPage() {
   return (
     <div className="flex flex-col flex-1">
-      <main className="container mx-auto flex flex-1 flex-col items-center justify-center px-4 text-center">
+      <main className="container mx-auto flex flex-1 flex-col items-center justify-center text-center">
         <div className="max-w-3xl">
           <h2 className="mb-6 text-5xl font-bold text-white md:text-6xl">
             Escucha música en sincronía con tus amigos

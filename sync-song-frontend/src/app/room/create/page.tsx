@@ -40,7 +40,7 @@ export default function CreateRoomPage() {
   };
 
   return (
-    <main className="container mx-auto flex flex-1 flex-col items-center justify-center px-4">
+    <main className="container mx-auto flex flex-1 flex-col items-center justify-center">
       <div className="w-full max-w-md rounded-xl bg-black/30 p-6 backdrop-blur-lg">
         <div className="mb-6 flex items-center justify-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-600">

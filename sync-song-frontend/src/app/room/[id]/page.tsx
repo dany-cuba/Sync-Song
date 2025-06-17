@@ -14,7 +14,7 @@ export default function RoomPage() {
   const [activeTab, setActiveTab] = useState("queue");
 
   return (
-    <main className="container mx-auto flex flex-1 flex-col px-4 py-6 gap-6">
+    <main className="container mx-auto flex flex-1 flex-col py-6 gap-6">
       {/* Reproductor de música */}
       <AudioPlayer />
 
